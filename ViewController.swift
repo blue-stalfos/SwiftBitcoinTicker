@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import Alamofire
+import SwiftyJSON
 
 class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
     
@@ -16,7 +18,7 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
 						 "PLN","RON","RUB","SEK","SGD","USD","ZAR"]
     var finalURL = ""
 
-    //Pre-setup IBOutlets
+	//MARK: - IBOutlets
     @IBOutlet weak var bitcoinPriceLabel: UILabel!
     @IBOutlet weak var currencyPicker: UIPickerView!
 	
@@ -42,32 +44,29 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
 	
 	func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
 		print(currencyArray[row])
+		
+		finalURL = baseURL + currencyArray[row]
+		print(finalURL)
 	}
-    
-//    
-//    //MARK: - Networking
-//    /***************************************************************/
-//    
-//    func getWeatherData(url: String, parameters: [String : String]) {
-//        
-//        Alamofire.request(url, method: .get, parameters: parameters)
-//            .responseJSON { response in
-//                if response.result.isSuccess {
+	
+    //MARK: - Networking
+    /***************************************************************/
+	
+    func getPriceData(url: String) {
+		Alamofire.request(url, method: .get).responseJSON {
+			response in if response.result.isSuccess {
+				print("Sucess! Got the cryptocurrency data")
+				let cryptoJSON : JSON = JSON(response.result.value!)
+
+				self.updatePriceData(json: cryptoJSON)
+			} else {
+				print("Error: \(String(describing: response.result.error))")
+				self.bitcoinPriceLabel.text = "Connection Issues"
+			}
+		}
+    }
+
 //
-//                    print("Sucess! Got the weather data")
-//                    let weatherJSON : JSON = JSON(response.result.value!)
-//
-//                    self.updateWeatherData(json: weatherJSON)
-//
-//                } else {
-//                    print("Error: \(String(describing: response.result.error))")
-//                    self.bitcoinPriceLabel.text = "Connection Issues"
-//                }
-//            }
-//
-//    }
-//
-//    
 //    
 //    
 //    
