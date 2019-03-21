@@ -47,6 +47,8 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
 		
 		finalURL = baseURL + currencyArray[row]
 		print(finalURL)
+		
+		getPriceData(url: finalURL)
 	}
 	
     //MARK: - Networking
@@ -55,8 +57,9 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     func getPriceData(url: String) {
 		Alamofire.request(url, method: .get).responseJSON {
 			response in if response.result.isSuccess {
-				print("Sucess! Got the cryptocurrency data")
-				let cryptoJSON : JSON = JSON(response.result.value!)
+//				print("Success! Got the cryptocurrency data")
+				let cryptoJSON: JSON = JSON(response.result.value!)
+//				print(cryptoJSON)
 
 				self.updatePriceData(json: cryptoJSON)
 			} else {
@@ -66,24 +69,16 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
 		}
     }
 
-//
-//    
-//    
-//    
-//    //MARK: - JSON Parsing
-//    /***************************************************************/
-//    
-//    func updateWeatherData(json : JSON) {
-//        
-//        if let tempResult = json["main"]["temp"].double {
-//        
-//        weatherData.temperature = Int(round(tempResult!) - 273.15)
-//        weatherData.city = json["name"].stringValue
-//        weatherData.condition = json["weather"][0]["id"].intValue
-//        weatherData.weatherIconName =    weatherData.updateWeatherIcon(condition: weatherData.condition)
-//        }
-//        
-//        updateUIWithWeatherData()
-//    }
-//
+
+    //MARK: - JSON Parsing
+    /***************************************************************/
+	
+    func updatePriceData(json: JSON) {
+        if let cryptoResult = json["ask"].double {
+			self.bitcoinPriceLabel.text = String(cryptoResult)
+//			print(cryptoResult)
+        } else {
+			self.bitcoinPriceLabel.text = "Unknown"
+		}
+	}
 }
